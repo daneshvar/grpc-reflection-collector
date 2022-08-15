@@ -83,6 +83,8 @@ func (s *Server) grpcServerRun(ctx context.Context, addr string) error {
 		// MaxConnectionAgeGrace will torn them, default to infinity
 		grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: 2 * time.Minute}),
 		// grpc.StatsHandler(&ocgrpc_propag.ServerHandler{}),
+		grpc.UnaryInterceptor(withUnaryServerLogger(s.log)),
+		grpc.StreamInterceptor(withStreamServerLogger(s.log)),
 	)
 
 	if closeFn, err := s.RegisterService(ctx, s); err != nil {

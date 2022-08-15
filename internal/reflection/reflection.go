@@ -18,14 +18,10 @@ type ServerReflectionServer struct {
 	services      map[string]rpb.ServerReflectionClient
 	serviceIgnore map[string]struct{}
 	cache         sync.Map
+	cacheEnabled  bool
 }
 
-const (
-	enableCache = false
-	verbose     = false
-)
-
-func NewServerReflectionServer(ctx context.Context, log *logger.Logger, services map[string]string, ignores []string) (*ServerReflectionServer, error) {
+func NewServerReflectionServer(ctx context.Context, log *logger.Logger, services map[string]string, ignores []string, cacheEnabled bool) (*ServerReflectionServer, error) {
 	serviceIgnore := make(map[string]struct{})
 
 	serviceIgnore["grpc.reflection.v1alpha.ServerReflection"] = struct{}{}
@@ -37,6 +33,7 @@ func NewServerReflectionServer(ctx context.Context, log *logger.Logger, services
 		log:           log,
 		services:      make(map[string]rpb.ServerReflectionClient),
 		serviceIgnore: serviceIgnore,
+		cacheEnabled:  cacheEnabled,
 	}
 
 	for name, addr := range services {
@@ -89,20 +86,16 @@ func (sr *ServerReflectionServer) ServerReflectionInfo(stream rpb.ServerReflecti
 		var r *rpb.ServerReflectionResponse = nil
 		servicesAdded := make(map[string]struct{})
 
-		if enableCache {
+		if sr.cacheEnabled {
 			if resp, ok := sr.cache.Load(fmt.Sprint(req)); ok {
 				r = resp.(*rpb.ServerReflectionResponse)
 			}
 		}
 
 		if r != nil {
-			if verbose {
-				sr.log.Infof("Request: req: %v cache", req)
-			}
+			sr.log.Tracef("Request: req: %v cache", req)
 		} else {
-			if verbose {
-				sr.log.Infof("Request: req: %v", req)
-			}
+			sr.log.Tracef("Request: req: %v", req)
 
 			matchSymbol := false
 			for service := range sr.services {
@@ -180,7 +173,7 @@ func (sr *ServerReflectionServer) ServerReflectionInfo(stream rpb.ServerReflecti
 				sr.log.Tracef("Send MessageResponse: %v\n", r.GetListServicesResponse().Service)
 			}
 
-			if enableCache {
+			if sr.cacheEnabled {
 				sr.cache.Store(fmt.Sprint(req), r)
 			}
 		}

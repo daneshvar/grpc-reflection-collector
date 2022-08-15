@@ -1,5 +1,6 @@
 Addr: localhost:50080
 DisableHealth: true
+Cache: false
 
 Services:
   Account: grpc://localhost:50010
@@ -7,3 +8,28 @@ Services:
 
 Ignores:
   - envoy.service.auth.v3.Authorization
+
+Logger:
+  Console:
+    Color: true
+    Caller: true
+    Stack: Error
+    Level: Info
+    Scope:
+      grpc: Fatal
+      srv-qry: Error
+
+  Influx:
+    Caller: true
+    Stack: Warn
+    Level: Error
+    Scope:
+      boot: Info
+      std: Info
+      reflect: Info
+
+    Url: http://localhost:8086
+    Token: "INFLUXDB TOKEN"
+    Org: "myorg"
+    Bucket: "bucket1"
+    AppName: "auth"

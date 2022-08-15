@@ -4,14 +4,22 @@ import (
 	"os"
 
 	"github.com/daneshvar/go-logger"
+	loggerinflux "github.com/daneshvar/go-logger-influx"
 	"github.com/spf13/viper"
 )
+
+type LoggerConfig struct {
+	Console *logger.ConsoleConfig
+	Influx  *loggerinflux.Config
+}
 
 type config struct {
 	Addr          string
 	DisableHealth bool
+	Cache         bool
 	Services      map[string]string
 	Ignores       []string
+	Logger        LoggerConfig
 }
 
 func loadConfig(log *logger.Logger) *config {
