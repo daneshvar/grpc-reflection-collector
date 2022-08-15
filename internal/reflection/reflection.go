@@ -93,9 +93,9 @@ func (sr *ServerReflectionServer) ServerReflectionInfo(stream rpb.ServerReflecti
 		}
 
 		if r != nil {
-			sr.log.Tracef("Request: req: %v cache", req)
+			sr.log.Infof("Request: req: %v cache", req)
 		} else {
-			sr.log.Tracef("Request: req: %v", req)
+			sr.log.Infof("Request: req: %v", req)
 
 			matchSymbol := false
 			for service := range sr.services {
