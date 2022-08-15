@@ -1,5 +1,4 @@
-FROM golang:1.19
-LABEL stage=builder
+FROM golang:1.19 AS builder
 
 # go install github.com/grpc-ecosystem/grpc-health-probe@latest
 RUN GRPC_HEALTH_PROBE_VERSION=v0.4.11 && \
