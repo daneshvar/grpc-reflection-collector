@@ -1,0 +1,9 @@
+Addr: localhost:50080
+DisableHealth: true
+
+Services:
+  Account: grpc://localhost:50010
+  Auth: grpc://localhost:50020
+
+Ignores:
+  - envoy.service.auth.v3.Authorization

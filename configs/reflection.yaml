@@ -1,0 +1,9 @@
+Addr: localhost:50020
+DisableHealth: false
+
+Services:
+  Movie: grpc://localhost:50060
+  Auth: grpc://localhost:5010
+
+Ignores:
+  - envoy.service.auth.v3.Authorization
